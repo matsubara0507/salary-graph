@@ -1,0 +1,34 @@
+package(default_visibility = ["//visibility:public"])
+
+load(
+    "@rules_haskell//haskell:defs.bzl",
+    "haskell_library",
+    "haskell_binary",
+)
+
+load(
+    "//:build/common.bzl",
+    "GHC_FLAGS",
+)
+load(
+    "//build/rules/haskell:def.bzl",
+    "paths_module",
+)
+
+haskell_library(
+    name = "salary-graph-library",
+    src_strip_prefix = "src",
+    srcs = glob(["src/**/*.hs"]),
+    deps = ["@stackage//:base"],
+    compiler_flags = GHC_FLAGS,
+)
+
+haskell_binary(
+    name = "salary-graph",
+    srcs = glob(["app/**/*.hs"]),
+    deps = [
+        ":salary-graph-library",
+        "@stackage//:base",
+    ],
+    compiler_flags = GHC_FLAGS,
+)
