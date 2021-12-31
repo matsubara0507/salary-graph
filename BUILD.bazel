@@ -19,7 +19,14 @@ haskell_library(
     name = "salary-graph-library",
     src_strip_prefix = "src",
     srcs = glob(["src/**/*.hs"]),
-    deps = ["@stackage//:base"],
+    deps = [
+        "@stackage//:aeson",
+        "@stackage//:base",
+        "@stackage//:elm-bridge",
+        "@stackage//:servant-elm",
+        "@stackage//:servant-server",
+        "@stackage//:warp",
+    ],
     compiler_flags = GHC_FLAGS,
 )
 

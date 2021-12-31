@@ -24,6 +24,11 @@ default-extensions:
 
 dependencies:
 - base >= 4.7 && < 5
+- aeson
+- elm-bridge
+- servant-elm
+- servant-server
+- warp
 
 library:
   source-dirs: src

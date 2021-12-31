@@ -32,7 +32,14 @@ load(
 
 stack_snapshot(
     name = "stackage",
-    packages = ["base"],
+    packages = [
+        "aeson",
+        "base",
+        "elm-bridge",
+        "servant-elm",
+        "servant-server",
+        "warp",
+    ],
     local_snapshot = "//:stack-snapshot.yaml",
 )
 
