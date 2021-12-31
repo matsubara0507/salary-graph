@@ -22,11 +22,15 @@ haskell_library(
     deps = [
         "@stackage//:aeson",
         "@stackage//:base",
+        "@stackage//:bytestring",
+        "@stackage//:containers",
         "@stackage//:elm-bridge",
+        "@stackage//:file-embed",
+        "@stackage//:http-media",
         "@stackage//:servant-elm",
         "@stackage//:servant-server",
-        "@stackage//:warp",
     ],
+    extra_srcs = ["static/index.html"],
     compiler_flags = GHC_FLAGS,
 )
 
@@ -36,6 +40,8 @@ haskell_binary(
     deps = [
         ":salary-graph-library",
         "@stackage//:base",
+        "@stackage//:servant-server",
+        "@stackage//:warp",
     ],
     compiler_flags = GHC_FLAGS,
 )

@@ -11,4 +11,7 @@ GHC_FLAGS = [
     "-optP-Wno-nonportable-include-path",
     "-DBAZEL_BUILD=1",
     "-XGHC2021",
+    "-XDataKinds",
+    "-XNoFieldSelectors",
+    "-XOverloadedStrings",
 ]

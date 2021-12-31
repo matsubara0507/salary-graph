@@ -21,14 +21,20 @@ ghc-options:
 
 default-extensions:
 - GHC2021
+- DataKinds
+- NoFieldSelectors
+- OverloadedStrings
 
 dependencies:
 - base >= 4.7 && < 5
 - aeson
+- bytestring
+- containers
 - elm-bridge
+- file-embed
+- http-media
 - servant-elm
 - servant-server
-- warp
 
 library:
   source-dirs: src
@@ -39,3 +45,4 @@ executables:
     source-dirs: app
     dependencies:
     - salary-graph
+    - warp

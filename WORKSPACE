@@ -35,7 +35,11 @@ stack_snapshot(
     packages = [
         "aeson",
         "base",
+        "bytestring",
+        "containers",
         "elm-bridge",
+        "file-embed",
+        "http-media",
         "servant-elm",
         "servant-server",
         "warp",
