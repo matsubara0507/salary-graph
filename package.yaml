@@ -23,6 +23,7 @@ default-extensions:
 - GHC2021
 - DataKinds
 - NoFieldSelectors
+- OverloadedRecordDot
 - OverloadedStrings
 
 dependencies:

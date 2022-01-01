@@ -13,5 +13,6 @@ GHC_FLAGS = [
     "-XGHC2021",
     "-XDataKinds",
     "-XNoFieldSelectors",
+    "-XOverloadedRecordDot",
     "-XOverloadedStrings",
 ]

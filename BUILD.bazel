@@ -10,6 +10,7 @@ load(
     "//:build/common.bzl",
     "GHC_FLAGS",
 )
+
 load(
     "//build/rules/haskell:def.bzl",
     "paths_module",
@@ -34,11 +35,18 @@ haskell_library(
     compiler_flags = GHC_FLAGS,
 )
 
+paths_module(
+    name = "paths_module",
+    package = "salary-graph",
+    version = "1.0.0",
+)
+
 haskell_binary(
     name = "salary-graph",
     srcs = glob(["app/**/*.hs"]),
     deps = [
         ":salary-graph-library",
+        ":paths_module",
         "@stackage//:base",
         "@stackage//:servant-server",
         "@stackage//:warp",
