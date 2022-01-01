@@ -19,6 +19,13 @@ packages:
   original:
     hackage: elm-bridge-0.8.0@sha256:1e63ca22ae2fb94584b3327c348ba8f7809c111a7e7d20af2abc80259b3f0ef0,2443
 - completed:
+    hackage: fsnotify-0.3.0.1@sha256:58bb530d7acf93eb4ed69473e32a1485581815f04f69dfc8a278523781ba49dd,2988
+    pantry-tree:
+      size: 1130
+      sha256: 8d1a410d34fd77e9b6603c9d1a940d7de63a85c852dbde467c0ef38c82ef6ea0
+  original:
+    hackage: fsnotify-0.3.0.1@sha256:58bb530d7acf93eb4ed69473e32a1485581815f04f69dfc8a278523781ba49dd,2988
+- completed:
     hackage: servant-elm-0.7.2@sha256:27e45a456ad56ba59502549a59ce66f7229a17bbce72c413cbf8615ed074d754,4579
     pantry-tree:
       size: 2081
@@ -148,6 +155,13 @@ packages:
       sha256: 8467afe9c94b2756e5703fed0950b51418bd877acbdd72e9dc3488b8f28f4e82
   original:
     hackage: dlist-1.0@sha256:124cb3aa1decebd5171b46601b1f74cca6cfae12d266ace3799b86dd05ef7cb4,3560
+- completed:
+    hackage: hfsevents-0.1.6@sha256:295b29e8a4ac51a0015f4fb92b4140139d7b13ed691318159a20f85ce785dac6,863
+    pantry-tree:
+      size: 438
+      sha256: 14370510ec9a045fdc5b7e614279a84e3540a968f8b5ad12b8796916c4d6d1ee
+  original:
+    hackage: hfsevents-0.1.6@sha256:295b29e8a4ac51a0015f4fb92b4140139d7b13ed691318159a20f85ce785dac6,863
 - completed:
     hackage: hashable-1.4.0.1@sha256:c35c9c1adc33bcfa31359e33e4c3db98305406eaa460f0e04d628f2a1de19be5,4804
     pantry-tree:
@@ -532,6 +546,13 @@ packages:
       sha256: 04134fa69cdd824b4e4bb7f77e7173e0705f27deabdbbf99549c549400191e1e
   original:
     hackage: call-stack-0.4.0@sha256:ac44d2c00931dc20b01750da8c92ec443eb63a7231e8550188cb2ac2385f7feb,1200
+- completed:
+    hackage: cereal-0.5.8.2@sha256:046ab07bfe82770e209a2ef57382171c88f7a194d020b768b7d8131299c7f023,2767
+    pantry-tree:
+      size: 641
+      sha256: cc17ff449ff10e7b9c66f9c7ffc6cf9866acdd537f847a49c5a2ac10d49f502b
+  original:
+    hackage: cereal-0.5.8.2@sha256:046ab07bfe82770e209a2ef57382171c88f7a194d020b768b7d8131299c7f023,2767
 - completed:
     hackage: comonad-5.0.8@sha256:1f1aabd73ec7f80f20cf078a748a60cd48d8e57277802fdf6a9ab3601a9b8f7e,3631
     pantry-tree:

@@ -73,13 +73,13 @@ options =
       (ReqArg (\port opts -> maybe opts (\p -> opts { port = p }) (readMaybe port)) "PORT")
       "Port for server (default is 8080)"
   , Option [] ["watch"]
-      (NoArg (\opts -> opts { verbose = True }))
+      (NoArg (\opts -> opts { watch = True }))
       "Enable watch data"
   , Option [] ["salaries"]
-      (ReqArg (\port opts -> maybe opts (\p -> opts { port = p }) (readMaybe port)) "PATH")
+      (ReqArg (\path opts -> opts { salariesDirPath = path }) "PATH")
       "Path to directory of salary data (default is ./data/salaries)"
   , Option [] ["appointments"]
-      (ReqArg (\port opts -> maybe opts (\p -> opts { port = p }) (readMaybe port)) "PATH")
+      (ReqArg (\path opts -> opts { appointmentsDirPath = path }) "PATH")
       "Path to directory of appointment data (default is ./data/appointments)"
   ]
 

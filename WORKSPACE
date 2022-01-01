@@ -40,6 +40,8 @@ stack_snapshot(
         "directory",
         "elm-bridge",
         "file-embed",
+        "filepath",
+        "fsnotify",
         "http-media",
         "servant-elm",
         "servant-server",

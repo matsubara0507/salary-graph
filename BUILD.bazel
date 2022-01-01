@@ -28,6 +28,8 @@ haskell_library(
         "@stackage//:directory",
         "@stackage//:elm-bridge",
         "@stackage//:file-embed",
+        "@stackage//:filepath",
+        "@stackage//:fsnotify",
         "@stackage//:http-media",
         "@stackage//:servant-elm",
         "@stackage//:servant-server",

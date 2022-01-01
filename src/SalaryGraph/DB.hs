@@ -3,8 +3,9 @@
 
 module SalaryGraph.DB where
 
+import Control.Concurrent     (forkIO, threadDelay)
 import Control.Concurrent.STM qualified as STM
-import Control.Monad          (when)
+import Control.Monad          (forever, when)
 import Data.Aeson             (FromJSON)
 import Data.Aeson             qualified as JSON
 import Data.Either            (partitionEithers)
@@ -13,6 +14,9 @@ import Data.Map               qualified as Map
 import GHC.Records            (HasField)
 import SalaryGraph.Salary     as Salary
 import System.Directory       (listDirectory)
+import System.FSNotify        qualified as File
+import System.FilePath        ((</>))
+import System.IO              (hPutStrLn, stderr)
 
 -- data Config = Config
 --   { watch               :: Bool
@@ -46,12 +50,14 @@ new config = do
         salaries <- STM.newTVarIO (toDataMap files1)
         appointments <- STM.newTVarIO (toDataMap files2)
         let db = DB {..}
-        when config.watch $ watch config db
+        when config.watch $ do
+          _ <- forkIO (watch config db)
+          pure ()
         pure $ Right db
 
 readAllJSON :: FromJSON a => FilePath -> IO (Either [String] [a])
 readAllJSON dir = do
-  paths <- listDirectory dir
+  paths <- map (dir </>) <$> listDirectory dir
   files <- mapM JSON.eitherDecodeFileStrict' paths
   pure $ case partitionEithers (files) of
     ([], fs)  -> Right $ concat fs
@@ -61,4 +67,23 @@ toDataMap :: HasField "year" r Year => [r] -> Map Year [r]
 toDataMap = Map.fromListWith (++) . map (\f -> (f.year, [f]))
 
 watch :: Config r => r -> DB -> IO ()
-watch = undefined
+watch config db =
+  File.withManager $ \mgr -> do
+    _ <- File.watchDir mgr config.salariesDirPath (not . File.eventIsDirectory) $ \_ -> do
+      result <- readAllJSON config.salariesDirPath
+      case result of
+        Left errs ->
+          hPutStrLn stderr (unlines errs)
+        Right files ->
+          STM.atomically $ STM.writeTVar db.salaries (toDataMap files)
+
+    _ <- File.watchDir mgr config.appointmentsDirPath (not . File.eventIsDirectory) $ \e -> do
+      print e
+      result <- readAllJSON config.appointmentsDirPath
+      case result of
+        Left errs ->
+          hPutStrLn stderr (unlines errs)
+        Right files ->
+          STM.atomically $ STM.writeTVar db.appointments (toDataMap files)
+
+    forever $ threadDelay 1000000

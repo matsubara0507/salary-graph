@@ -32,9 +32,9 @@ type API
 
 type SalaryAPI
       = "salaries" :> Get '[JSON] (Map Year [Salary])
-   :<|> "salaries" :> QueryParam' '[Required] "year" Year :> Get '[JSON] [Salary]
+   :<|> "salaries" :> Capture "year" Year :> Get '[JSON] [Salary]
    :<|> "appointments" :> Get '[JSON] (Map Year [Salary.Appointment])
-   :<|> "appointments" :> QueryParam' '[Required] "year" Year :> Get '[JSON] [Salary.Appointment]
+   :<|> "appointments" :> Capture "year" Year :> Get '[JSON] [Salary.Appointment]
 
 indexHtml :: ByteString
 indexHtml = $(embedFile "static/index.html")
