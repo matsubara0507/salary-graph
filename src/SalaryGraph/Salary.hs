@@ -5,9 +5,13 @@ module SalaryGraph.Salary where
 
 import Elm.Derive
 
+type Year = Int
+
+type Month = Int
+
 data Salary = Salary
-  { year    :: Int
-  , month   :: Int
+  { year    :: Year
+  , month   :: Month
   , gross   :: Int
   , net     :: Int
   , isBonus :: Bool

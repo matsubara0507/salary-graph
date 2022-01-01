@@ -31,11 +31,13 @@ dependencies:
 - aeson
 - bytestring
 - containers
+- directory
 - elm-bridge
 - file-embed
 - http-media
 - servant-elm
 - servant-server
+- stm
 
 library:
   source-dirs: src

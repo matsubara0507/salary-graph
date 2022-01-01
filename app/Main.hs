@@ -9,6 +9,7 @@ import Control.Monad            (when)
 import Data.Version             qualified as Version
 import Network.Wai.Handler.Warp qualified as Warp
 import SalaryGraph.API          qualified as SalaryGraph
+import SalaryGraph.DB           qualified as DB
 import Servant                  (serve)
 import System.Console.GetOpt
 import System.Environment       (getArgs)
@@ -26,16 +27,24 @@ main = do
 
 runServer :: Options -> IO ()
 runServer opts = do
-  when opts.verbose $
-    putStrLn ("Listening on port " ++ show opts.port)
-  Warp.run opts.port $
-    serve SalaryGraph.api SalaryGraph.server
+  db <- DB.new opts
+  case db of
+    Left errs ->
+      ioError (userError $ unlines errs)
+    Right db' -> do
+      when opts.verbose $
+        putStrLn ("Listening on port " ++ show opts.port)
+      Warp.run opts.port $
+        serve SalaryGraph.api (SalaryGraph.server db')
 
 data Options = Options
-  { help    :: Bool
-  , version :: Bool
-  , verbose :: Bool
-  , port    :: Int
+  { help                :: Bool
+  , version             :: Bool
+  , verbose             :: Bool
+  , port                :: Int
+  , watch               :: Bool
+  , salariesDirPath     :: FilePath
+  , appointmentsDirPath :: FilePath
   }
 
 defaultOptions :: Options
@@ -44,6 +53,9 @@ defaultOptions = Options
   , version = False
   , verbose = False
   , port    = 8080
+  , watch   = False
+  , salariesDirPath = "./data/salaries"
+  , appointmentsDirPath = "./data/appointments"
   }
 
 options :: [OptDescr (Options -> Options)]
@@ -60,6 +72,15 @@ options =
   , Option ['p'] ["port"]
       (ReqArg (\port opts -> maybe opts (\p -> opts { port = p }) (readMaybe port)) "PORT")
       "Port for server (default is 8080)"
+  , Option [] ["watch"]
+      (NoArg (\opts -> opts { verbose = True }))
+      "Enable watch data"
+  , Option [] ["salaries"]
+      (ReqArg (\port opts -> maybe opts (\p -> opts { port = p }) (readMaybe port)) "PATH")
+      "Path to directory of salary data (default is ./data/salaries)"
+  , Option [] ["appointments"]
+      (ReqArg (\port opts -> maybe opts (\p -> opts { port = p }) (readMaybe port)) "PATH")
+      "Path to directory of appointment data (default is ./data/appointments)"
   ]
 
 compilerOpts :: String -> [String] -> IO Options
@@ -67,4 +88,3 @@ compilerOpts usage argv =
   case getOpt Permute options argv of
     (o, _, []  ) -> pure $ foldl (flip id) defaultOptions o
     (_, _, errs) -> ioError $ userError (concat errs ++ usage)
-

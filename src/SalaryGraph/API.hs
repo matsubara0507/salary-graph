@@ -3,12 +3,16 @@
 
 module SalaryGraph.API where
 
-import Data.ByteString      (ByteString)
-import Data.ByteString.Lazy qualified as LBS
-import Data.FileEmbed       (embedFile)
-import Data.Map             (Map)
-import Network.HTTP.Media   ((//), (/:))
-import SalaryGraph.Salary   as Salary
+import Control.Concurrent.STM qualified as STM
+import Control.Monad.IO.Class (liftIO)
+import Data.ByteString        (ByteString)
+import Data.ByteString.Lazy   qualified as LBS
+import Data.FileEmbed         (embedFile)
+import Data.Map               (Map)
+import Data.Map               qualified as Map
+import Network.HTTP.Media     ((//), (/:))
+import SalaryGraph.DB         as DB
+import SalaryGraph.Salary     as Salary
 import Servant
 
 api :: Proxy API
@@ -27,22 +31,22 @@ type API
    :<|> "api" :> SalaryAPI
 
 type SalaryAPI
-      = "salaries" :> Get '[JSON] (Map Int [Salary])
-   :<|> "salaries" :> QueryParam' '[Required] "year" Integer :> Get '[JSON] [Salary]
-   :<|> "appointments" :> Get '[JSON] (Map Int [Salary.Appointment])
-   :<|> "appointments" :> QueryParam' '[Required] "year" Integer :> Get '[JSON] [Salary.Appointment]
+      = "salaries" :> Get '[JSON] (Map Year [Salary])
+   :<|> "salaries" :> QueryParam' '[Required] "year" Year :> Get '[JSON] [Salary]
+   :<|> "appointments" :> Get '[JSON] (Map Year [Salary.Appointment])
+   :<|> "appointments" :> QueryParam' '[Required] "year" Year :> Get '[JSON] [Salary.Appointment]
 
 indexHtml :: ByteString
 indexHtml = $(embedFile "static/index.html")
 
-server :: Monad m => ServerT API m
-server = pure indexHtml
+server :: DB -> Server API
+server db = pure indexHtml
     :<|> getAllSalaries
     :<|> getSalaries
     :<|> getAllAppointments
     :<|> getAppointments
   where
-    getAllSalaries = undefined
-    getSalaries = undefined
-    getAllAppointments = undefined
-    getAppointments = undefined
+    getAllSalaries = liftIO $ STM.readTVarIO db.salaries
+    getSalaries year = liftIO $ Map.findWithDefault mempty year <$> STM.readTVarIO db.salaries
+    getAllAppointments = liftIO $ STM.readTVarIO db.appointments
+    getAppointments year = liftIO $ Map.findWithDefault mempty year <$> STM.readTVarIO db.appointments
