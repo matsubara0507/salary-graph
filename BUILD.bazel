@@ -1,6 +1,27 @@
 package(default_visibility = ["//visibility:public"])
 
 load(
+    "@rules_elm//elm:def.bzl",
+    "elm_dependencies",
+    "elm_make",
+)
+
+elm_dependencies(
+    name = "deps",
+    elm_json = "elm.json",
+)
+
+elm_make(
+    name = "mainjs",
+    srcs = glob(["elm-src/**"]),
+    elm_home = ":deps",
+    elm_json = "elm.json",
+    main = "elm-src/Main.elm",
+    output = "static/javascript/main.js",
+    visibility = ["//visibility:public"],
+)
+
+load(
     "@rules_haskell//haskell:defs.bzl",
     "haskell_library",
     "haskell_binary",
@@ -30,13 +51,17 @@ haskell_library(
         "@stackage//:file-embed",
         "@stackage//:filepath",
         "@stackage//:fsnotify",
+        "@stackage//:http-api-data",
         "@stackage//:http-media",
         "@stackage//:servant-elm",
         "@stackage//:servant-server",
         "@stackage//:stm",
     ],
-    extra_srcs = ["static/index.html"],
-    compiler_flags = GHC_FLAGS,
+    extra_srcs = [
+        "static/index.html",
+        ":mainjs",
+    ],
+    compiler_flags = ["-DMAINJS_FILE=\"$(execpath :mainjs)\""] + GHC_FLAGS,
 )
 
 paths_module(
@@ -47,7 +72,7 @@ paths_module(
 
 haskell_binary(
     name = "salary-graph",
-    srcs = glob(["app/**/*.hs"]),
+    srcs = glob(["app/server/**/*.hs"]),
     deps = [
         ":salary-graph-library",
         ":paths_module",
@@ -57,3 +82,17 @@ haskell_binary(
     ],
     compiler_flags = GHC_FLAGS,
 )
+
+haskell_binary(
+    name = "generateElm",
+    srcs = glob(["app/generate/**/*.hs"]),
+    deps = [
+        ":salary-graph-library",
+        "@stackage//:base",
+        "@stackage//:elm-bridge",
+        "@stackage//:servant-elm",
+        "@stackage//:servant-server",
+    ],
+    compiler_flags = GHC_FLAGS,
+)
+

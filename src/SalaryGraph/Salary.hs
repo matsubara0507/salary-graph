@@ -1,13 +1,22 @@
+{-# LANGUAGE DerivingStrategies    #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE TemplateHaskell       #-}
 
 module SalaryGraph.Salary where
 
+import Data.Aeson      (FromJSON, ToJSON, ToJSONKey)
 import Elm.Derive
+import Web.HttpApiData (FromHttpApiData)
 
-type Year = Int
+newtype Year = Year Int
+  deriving newtype (Show, Eq, Ord, FromJSON, ToJSON, ToJSONKey, FromHttpApiData)
 
-type Month = Int
+deriveElmDef defaultOptions ''Year
+
+newtype Month = Month Int
+  deriving newtype (Show, Eq, FromJSON, ToJSON)
+
+deriveElmDef defaultOptions ''Month
 
 data Salary = Salary
   { year    :: Year
@@ -20,8 +29,8 @@ data Salary = Salary
 deriveBoth defaultOptions ''Salary
 
 data Appointment = Appointment
-  { year   :: Int
-  , month  :: Int
+  { year   :: Year
+  , month  :: Month
   , before :: Int
   , after  :: Int
   } deriving (Show, Eq)

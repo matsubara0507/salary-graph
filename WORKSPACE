@@ -42,6 +42,7 @@ stack_snapshot(
         "file-embed",
         "filepath",
         "fsnotify",
+        "http-api-data",
         "http-media",
         "servant-elm",
         "servant-server",
@@ -57,3 +58,17 @@ load(
 )
 
 rules_haskell_toolchains(version = "9.2.1")
+
+http_archive(
+    name = "rules_elm",
+    sha256 = "a9db7f55e3693ab94a60cbf602221095514aec6541253b21cc89f0ba1365d87c",
+    urls = ["https://github.com/matsubara0507/rules_elm/releases/download/v1.0.0/rules_elm-v1.0.0.zip"],
+)
+
+load("@rules_elm//elm:repositories.bzl", rules_elm_repositories = "repositories")
+
+rules_elm_repositories()
+
+load("@rules_elm//elm:toolchain.bzl", rules_elm_toolchains = "toolchains")
+
+rules_elm_toolchains(version = "0.19.1")

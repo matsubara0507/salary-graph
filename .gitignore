@@ -8,3 +8,5 @@ bazel-salary-graph
 bazel-out
 bazel-testlogs
 data/*
+elm-stuff
+static/javascript/main.js

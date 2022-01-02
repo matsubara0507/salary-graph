@@ -31,8 +31,8 @@ type Config r =
     )
 
 data DB = DB
-  { salaries     :: STM.TVar (Map Year [Salary])
-  , appointments :: STM.TVar (Map Year [Salary.Appointment])
+  { salaries     :: STM.TVar (Map Salary.Year [Salary])             -- key is Year
+  , appointments :: STM.TVar (Map Salary.Year [Salary.Appointment]) -- key is Year
   }
 
 new :: Config r => r -> IO (Either [String] DB)
@@ -47,8 +47,8 @@ new config = do
     (_, Left errs2) ->
         pure $ Left errs2
     (Right files1, Right files2) -> do
-        salaries <- STM.newTVarIO (toDataMap files1)
-        appointments <- STM.newTVarIO (toDataMap files2)
+        salaries <- STM.newTVarIO (toYearMap files1)
+        appointments <- STM.newTVarIO (toYearMap files2)
         let db = DB {..}
         when config.watch $ do
           _ <- forkIO (watch config db)
@@ -63,8 +63,8 @@ readAllJSON dir = do
     ([], fs)  -> Right $ concat fs
     (errs, _) -> Left errs
 
-toDataMap :: HasField "year" r Year => [r] -> Map Year [r]
-toDataMap = Map.fromListWith (++) . map (\f -> (f.year, [f]))
+toYearMap :: HasField "year" r Year => [r] -> Map Salary.Year [r]
+toYearMap = Map.fromListWith (++) . map (\a -> (a.year, [a]))
 
 watch :: Config r => r -> DB -> IO ()
 watch config db =
@@ -75,7 +75,7 @@ watch config db =
         Left errs ->
           hPutStrLn stderr (unlines errs)
         Right files ->
-          STM.atomically $ STM.writeTVar db.salaries (toDataMap files)
+          STM.atomically $ STM.writeTVar db.salaries (toYearMap files)
 
     _ <- File.watchDir mgr config.appointmentsDirPath (not . File.eventIsDirectory) $ \e -> do
       print e
@@ -84,6 +84,6 @@ watch config db =
         Left errs ->
           hPutStrLn stderr (unlines errs)
         Right files ->
-          STM.atomically $ STM.writeTVar db.appointments (toDataMap files)
+          STM.atomically $ STM.writeTVar db.appointments (toYearMap files)
 
     forever $ threadDelay 1000000

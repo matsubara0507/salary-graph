@@ -36,6 +36,7 @@ dependencies:
 - file-embed
 - filepath
 - fsnotify
+- http-api-data
 - http-media
 - servant-elm
 - servant-server
@@ -43,11 +44,19 @@ dependencies:
 
 library:
   source-dirs: src
+  cpp-options:
+  - -DMAINJS_FILE="static/javascript/main.js"
 
 executables:
   salary-graph:
     main: Main.hs
-    source-dirs: app
+    source-dirs: app/server
     dependencies:
     - salary-graph
     - warp
+
+  generate:
+    main: Main.hs
+    source-dirs: app/generate
+    dependencies:
+    - salary-graph
