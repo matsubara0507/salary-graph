@@ -24,6 +24,42 @@ updateZone zone range =
     { range | zone = zone }
 
 
+fromString : ( String, String ) -> Time.Zone -> Maybe Range
+fromString ( fromStr, toStr ) zone =
+    case ( String.toInt fromStr, String.toInt toStr ) of
+        ( Just from, Just to ) ->
+            Just
+                { from = ( from // 100, modBy 100 from )
+                , to = ( to // 100, modBy 100 to )
+                , zone = zone
+                }
+
+        _ ->
+            Nothing
+
+
+toString : Range -> ( String, String )
+toString range =
+    ( String.fromInt (Tuple.first range.from * 100 + Tuple.second range.from)
+    , String.fromInt (Tuple.first range.to * 100 + Tuple.second range.to)
+    )
+
+
+include : Range -> { m | year : Salary.Year, month : Salary.Month } -> Bool
+include range val =
+    let
+        from =
+            Tuple.first range.from * 100 + Tuple.second range.from
+
+        to =
+            Tuple.first range.to * 100 + Tuple.second range.to
+
+        ym =
+            val.year * 100 + val.month
+    in
+    from <= ym && ym <= to
+
+
 yearRange : Range -> List Salary.Year
 yearRange range =
     List.range (Tuple.first range.from) (Tuple.first range.to)
@@ -34,8 +70,7 @@ syncYearMonth toTime range =
     let
         fromTime =
             toTime
-                |> Time.add Time.Year -1 range.zone
-                |> Time.add Time.Day 1 range.zone
+                |> Time.add Time.Month -11 range.zone
     in
     { range
         | from = toYearMonth fromTime range.zone

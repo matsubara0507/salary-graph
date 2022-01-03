@@ -7,7 +7,8 @@ import Chart.Attributes as CA
 import Dict exposing (Dict)
 import Generated.SalaryAPI as Salary exposing (Salary)
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, maxlength, size, style, type_, value)
+import Html.Events exposing (onClick, onInput)
 import Http
 import List
 import Model.Monthly as Monthly
@@ -33,6 +34,8 @@ type alias Model =
     , range : Range
     , salaries : Dict Salary.Year (List Salary)
     , appointments : Dict Salary.Year (List Salary.Appointment)
+    , inputFrom : String
+    , inputTo : String
     }
 
 
@@ -43,6 +46,9 @@ type Msg
     | FetchAppointments Salary.Year (Result Http.Error (List Salary.Appointment))
     | HereZone Time.Zone
     | Now Posix
+    | InputFrom String
+    | InputTo String
+    | ChangeRange
 
 
 init : {} -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -52,6 +58,8 @@ init _ url key =
         , range = Range.empty
         , salaries = Dict.empty
         , appointments = Dict.empty
+        , inputFrom = ""
+        , inputTo = ""
         }
 
 
@@ -107,25 +115,76 @@ update message model =
             ( { model | range = Range.updateZone zone model.range }, Cmd.none )
 
         Now t ->
-            fetchAll { model | range = Range.syncYearMonth t model.range }
+            let
+                range =
+                    Range.syncYearMonth t model.range
+
+                ( inputFrom, inputTo ) =
+                    Range.toString range
+            in
+            fetchAll { model | range = range, inputFrom = inputFrom, inputTo = inputTo }
+
+        InputFrom str ->
+            ( { model | inputFrom = str }, Cmd.none )
+
+        InputTo str ->
+            ( { model | inputTo = str }, Cmd.none )
+
+        ChangeRange ->
+            case Range.fromString ( model.inputFrom, model.inputTo ) model.range.zone of
+                Just range ->
+                    fetchAll { model | range = range }
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 view : Model -> Browser.Document Msg
 view model =
     { title = "Salary Graph"
-    , body = viewBody model
+    , body = [ viewBody model ]
     }
 
 
-viewBody : Model -> List (Html Msg)
+viewBody : Model -> Html Msg
 viewBody model =
-    [ div [ class "Header" ]
-        [ div [ class "Header-item" ] [ span [] [ text "Salary Graph" ] ]
+    div [ class "Layout Layout--gutter-condensed height-full" ]
+        [ div [ class "Layout-sidebar SideNav border", style "max-width" "360px" ]
+            []
+        , div [ class "Layout-main" ]
+            [ div [ class "container-lg p-3" ]
+                [ div [ class "Subhead" ]
+                    [ div [ class "Subhead-heading" ] [ text "Salary Graph" ]
+                    , div [ class "Subhead-actions" ]
+                        [ label [] [ text "From" ]
+                        , input
+                            [ class "form-control input-sm"
+                            , type_ "text"
+                            , size 6
+                            , maxlength 6
+                            , value model.inputFrom
+                            , onInput InputFrom
+                            ]
+                            []
+                        , label [] [ text "To" ]
+                        , input
+                            [ class "form-control input-sm"
+                            , type_ "text"
+                            , size 6
+                            , maxlength 6
+                            , value model.inputTo
+                            , onInput InputTo
+                            ]
+                            []
+                        , button [ class "btn btn-sm", type_ "submit", onClick ChangeRange ] [ text "変更" ]
+                        ]
+                    ]
+                , div [ class "≈mx-auto text-center m-6" ]
+                    [ viewChart model
+                    ]
+                ]
+            ]
         ]
-    , div [ class "col-8 mx-auto text-center m-6" ]
-        [ viewChart model
-        ]
-    ]
 
 
 viewChart : Model -> Html Msg
@@ -133,7 +192,7 @@ viewChart model =
     let
         monthlies =
             Monthly.build
-                (List.concat (Dict.values model.salaries))
+                (List.filter (Range.include model.range) <| List.concat (Dict.values model.salaries))
                 (List.concat (Dict.values model.appointments))
                 |> List.sortBy .x
 

@@ -45,10 +45,13 @@ fromSalary appointments idx salary =
                 |> Maybe.map .before
                 |> Maybe.withDefault 0
 
+        ym =
+            salary.year * 100 + salary.month
+
         latestBase =
             appointments
                 |> List.reverse
-                |> List.find (\x -> x.year <= salary.year && x.month < salary.month)
+                |> List.find (\x -> x.year * 100 + x.month < ym)
                 |> Maybe.map .after
                 |> Maybe.withDefault startBase
     in
