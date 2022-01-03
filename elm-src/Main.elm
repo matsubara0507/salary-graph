@@ -7,8 +7,8 @@ import Chart.Attributes as CA
 import Dict exposing (Dict)
 import Generated.SalaryAPI as Salary exposing (Salary)
 import Html exposing (..)
-import Html.Attributes exposing (class, maxlength, size, style, type_, value)
-import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (checked, class, maxlength, size, style, type_, value)
+import Html.Events exposing (onCheck, onClick, onInput)
 import Http
 import List
 import Model.Monthly as Monthly
@@ -36,6 +36,9 @@ type alias Model =
     , appointments : Dict Salary.Year (List Salary.Appointment)
     , inputFrom : String
     , inputTo : String
+    , displayLabel : Bool
+    , displayNet : Bool
+    , displayBase : Bool
     }
 
 
@@ -49,6 +52,9 @@ type Msg
     | InputFrom String
     | InputTo String
     | ChangeRange
+    | DisplayLabel Bool
+    | DisplayNet Bool
+    | DisplayBase Bool
 
 
 init : {} -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -60,6 +66,9 @@ init _ url key =
         , appointments = Dict.empty
         , inputFrom = ""
         , inputTo = ""
+        , displayLabel = True
+        , displayNet = True
+        , displayBase = True
         }
 
 
@@ -138,6 +147,15 @@ update message model =
                 _ ->
                     ( model, Cmd.none )
 
+        DisplayLabel enable ->
+            ( { model | displayLabel = enable }, Cmd.none )
+
+        DisplayNet enable ->
+            ( { model | displayNet = enable }, Cmd.none )
+
+        DisplayBase enable ->
+            ( { model | displayBase = enable }, Cmd.none )
+
 
 view : Model -> Browser.Document Msg
 view model =
@@ -156,7 +174,19 @@ viewBody model =
                 [ div [ class "Subhead" ]
                     [ div [ class "Subhead-heading" ] [ text "Salary Graph" ]
                     , div [ class "Subhead-actions" ]
-                        [ label [] [ text "From" ]
+                        [ label [ class "p-1" ]
+                            [ input [ type_ "checkbox", checked model.displayLabel, onCheck DisplayLabel ] []
+                            , text "Y軸を表示"
+                            ]
+                        , label [ class "p-1" ]
+                            [ input [ type_ "checkbox", checked model.displayNet, onCheck DisplayNet ] []
+                            , text "手取り収入を表示"
+                            ]
+                        , label [ class "p-1" ]
+                            [ input [ type_ "checkbox", checked model.displayBase, onCheck DisplayBase ] []
+                            , text "基本給を表示"
+                            ]
+                        , label [] [ text "From" ]
                         , input
                             [ class "form-control input-sm"
                             , type_ "text"
@@ -210,23 +240,37 @@ viewChart model =
             ]
         , CA.margin { top = 30, bottom = 0, left = 0, right = 0 }
         ]
-        [ C.yLabels [ CA.withGrid, CA.pinned .min ]
+        [ if model.displayLabel then
+            C.yLabels [ CA.withGrid, CA.pinned .min ]
+
+          else
+            C.list []
         , C.binLabels
             (\x -> String.fromInt x.year ++ "/" ++ String.fromInt x.month)
-            [ CA.moveDown 15 ]
+            [ CA.moveDown 30
+            , CA.rotate -45
+            ]
         , C.bars
             [ CA.roundTop 0.3, CA.ungroup ]
             [ C.named "額面収入" <| C.bar .gross []
-            , C.named "手取り収入" <| C.bar .net [ CA.striped [] ]
+            , if model.displayNet then
+                C.named "手取り収入" <| C.bar .net [ CA.striped [] ]
+
+              else
+                C.stacked []
             ]
             monthlies
-        , C.series .x
-            [ C.named "基本給" <|
-                C.interpolated .base
-                    [ CA.width 4 ]
-                    [ CA.cross, CA.borderWidth 2, CA.border "white" ]
-            ]
-            monthlies
+        , if model.displayBase then
+            C.series .x
+                [ C.named "基本給" <|
+                    C.interpolated .base
+                        [ CA.width 4 ]
+                        [ CA.cross, CA.borderWidth 2, CA.border "white" ]
+                ]
+                monthlies
+
+          else
+            C.list []
         , C.legendsAt .min
             .max
             [ CA.row
