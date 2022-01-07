@@ -1,0 +1,30 @@
+name: Build Application
+
+on:
+  pull_request: null
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache Bazel
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/bazel
+        key: ${{ runner.os }}-${{ hashFiles('WORKSPACE') }}
+
+    - name: Build binary
+      run: |
+        bazelisk build //:salary-graph
+        bazel-bin/salary-graph --version
+        bazel-bin/salary-graph --help
