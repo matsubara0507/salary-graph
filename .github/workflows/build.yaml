@@ -31,7 +31,7 @@ jobs:
     - name: Build image
       run: |
         bazelisk run //:image
-        docker run --rm bazel:image -- --version
+        docker run --rm bazel:image --version
 
     # Build and Push Docker Image
     - name: Setup QEMU
