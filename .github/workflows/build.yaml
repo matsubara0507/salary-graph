@@ -28,3 +28,24 @@ jobs:
         bazelisk build //:salary-graph
         bazel-bin/salary-graph --version
         bazel-bin/salary-graph --help
+    - name: Build image
+      run: |
+        bazelisk run //:image
+        docker run --rm bazel:image -- --version
+
+    # Build and Push Docker Image
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@master
+      with:
+        platforms: all
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: matsubara0507
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push image
+      if: ${{ github.event_name != 'pull_request' }}
+      run: bazelisk run //:push

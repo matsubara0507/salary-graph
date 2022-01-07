@@ -945,4 +945,39 @@ packages:
       sha256: 5730b45e857424c97d24ee1cf530be1fc782cd000221ac97b5568be886cbbc2b
   original:
     hackage: void-0.7.3@sha256:13d30f62fcdf065e595d679d4ac8b4b0c1bb1a1b73db7b5b5a8f857cb5c8a546,1857
+- completed:
+    hackage: hinotify-0.4.1@sha256:88b8934da67b526df25b1b00d57621ed0570989ad35e73b99883c80a6503990c,2716
+    pantry-tree:
+      size: 854
+      sha256: 9ca65c2a2d49de2b616dd1b39d793076153e7768b2f9ab5590057870a200fce9
+  original:
+    hackage: hinotify-0.4.1@sha256:88b8934da67b526df25b1b00d57621ed0570989ad35e73b99883c80a6503990c,2716
+- completed:
+    hackage: shelly-1.9.0@sha256:1e64ad5e589824a8bd268777deebfcf852f484d52cb3ca361f5544fe1c6d0834,5298
+    pantry-tree:
+      size: 2314
+      sha256: 58315022b70f1fa3184fbcc9f8f35c50c6c88b24c40ad952a60d0ed974b779d3
+  original:
+    hackage: shelly-1.9.0@sha256:1e64ad5e589824a8bd268777deebfcf852f484d52cb3ca361f5544fe1c6d0834,5298
+- completed:
+    hackage: enclosed-exceptions-1.0.3@sha256:6d4e9b5156721ccfa62d3cdcbf13d8571773031050ec714cb55b841f0c183f6a,1911
+    pantry-tree:
+      size: 391
+      sha256: 368b7dc151ff8bc024462f47609cdf1656eabab28e177e70d8dcb03ceca4bcbf
+  original:
+    hackage: enclosed-exceptions-1.0.3@sha256:6d4e9b5156721ccfa62d3cdcbf13d8571773031050ec714cb55b841f0c183f6a,1911
+- completed:
+    hackage: lifted-async-0.10.2.2@sha256:7fa02000931faaee85723ada9bcb1c7773cfcea740113f62ea60c0bd84f9dfcf,2799
+    pantry-tree:
+      size: 872
+      sha256: 19f392d91c38c6246b3e55e337bc05e0a49d69c647dca751a0596525f9d72205
+  original:
+    hackage: lifted-async-0.10.2.2@sha256:7fa02000931faaee85723ada9bcb1c7773cfcea740113f62ea60c0bd84f9dfcf,2799
+- completed:
+    hackage: lifted-base-0.2.3.12@sha256:e94ad0692c9c5d85c373e508f23654f2da8ac8c3e475c2b65ffbc04fb165ad69,3369
+    pantry-tree:
+      size: 1129
+      sha256: a1d78bdab90ed2863854f825f6ab277e5df0af856fec06ac1c39131e8019aef5
+  original:
+    hackage: lifted-base-0.2.3.12@sha256:e94ad0692c9c5d85c373e508f23654f2da8ac8c3e475c2b65ffbc04fb165ad69,3369
 snapshots: []

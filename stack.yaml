@@ -155,7 +155,16 @@ extra-deps:
 - semigroups-0.20@sha256:925341e6f7eb104cb490bef06eab93bb7995c7c67c51ee938185a2ddefa7aaf2,6333
 - void-0.7.3@sha256:13d30f62fcdf065e595d679d4ac8b4b0c1bb1a1b73db7b5b5a8f857cb5c8a546,1857
 
+- hinotify-0.4.1@sha256:88b8934da67b526df25b1b00d57621ed0570989ad35e73b99883c80a6503990c,2716
+- shelly-1.9.0@sha256:1e64ad5e589824a8bd268777deebfcf852f484d52cb3ca361f5544fe1c6d0834,5298
+- enclosed-exceptions-1.0.3@sha256:6d4e9b5156721ccfa62d3cdcbf13d8571773031050ec714cb55b841f0c183f6a,1911
+- lifted-async-0.10.2.2@sha256:7fa02000931faaee85723ada9bcb1c7773cfcea740113f62ea60c0bd84f9dfcf,2799
+- lifted-base-0.2.3.12@sha256:e94ad0692c9c5d85c373e508f23654f2da8ac8c3e475c2b65ffbc04fb165ad69,3369
+
 flags:
   transformers-compat:
     five-three: true
-  
+
+docker:
+  repo: ghcr.io/matsubara0507/stack-build:18.04
+  enable: false
